@@ -1,14 +1,44 @@
-import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+import { useState } from "react";
+import { StyleSheet, View, FlatList } from "react-native";
+import FoodItem from "./components/FoodItem";
+import FoodInput from "./components/FoodInput";
 
 export default function App() {
+  const [foods, setFood] = useState([]);
+
+  function addFoodHandler(enteredFoodText) {
+    setFood((currentFoods) => [
+      ...currentFoods,
+      { text: enteredFoodText, id: Math.random().toString() },
+    ]);
+  }
+
+  function deleteFoodHandler(id) {
+    setFood((currentFoods) => {
+      return currentFoods.filter((food) => food.id !== id);
+    });
+  }
+
   return (
     <View style={styles.appContainer}>
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.textInput} placeholder="Your favourite food" />
-        <Button title="Add food" />
-      </View>
+      <FoodInput onAddFood={addFoodHandler} />
       <View style={styles.foodContainer}>
-        <Text>List of food</Text>
+        <FlatList
+          data={foods}
+          renderItem={(itemData) => {
+            return (
+              <FoodItem
+                text={itemData.item.text}
+                id={itemData.item.id}
+                onDeleteItem={deleteFoodHandler}
+              />
+            );
+          }}
+          keyExtractor={(item, index) => {
+            return item.id;
+          }}
+          alwaysBounceVertical={false}
+        />
       </View>
     </View>
   );
@@ -20,24 +50,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 16,
   },
-  inputContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
-
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#cccccc',
-    width: '70%',
-    marginRight: 8,
-    padding: 8
-  },
   foodContainer: {
-    flex:5,
-  }
+    flex: 5,
+  },
 });
