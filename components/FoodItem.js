@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   foodItem: {
     margin: 8,
     borderRadius: 6,
-    backgroundColor: "#5e0acc",
+    backgroundColor: "#249909",
   },
   pressedItem: {
     opacity: 0.5
