@@ -6,7 +6,9 @@ import {
   StyleSheet,
   Modal,
   Image,
+  SafeAreaView,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 function FoodInput(props) {
   const [enteredFoodText, setEnteredFoodText] = useState("");
@@ -22,26 +24,40 @@ function FoodInput(props) {
 
   return (
     <Modal visible={props.visible} animationType="slide">
-      <View style={styles.inputContainer}>
-        <Image
-          style={styles.image}
-          source={require("../assets/images/emoji.png")}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Your favourite food"
-          onChangeText={foodInputHandler}
-          value={enteredFoodText}
-        />
-        <View style={styles.buttonContainer}>
-          <View style={styles.button}>
-            <Button title="Cancel" onPress={props.onCancel} color="#002404" />
-          </View>
-          <View style={styles.button}>
-            <Button title="Add food" onPress={addFoodHandler} color="#249909" />
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.inputContainer}>
+          <Image
+            style={styles.image}
+            source={require("../assets/images/emoji.png")}
+          />
+
+          <LinearGradient
+            colors={["#4A00E0", "#8E2DE2"]}
+            style={styles.gradientInput}
+          >
+            <TextInput
+              style={styles.textInput}
+              placeholder="Your favourite food"
+              placeholderTextColor="#eee"
+              onChangeText={foodInputHandler}
+              value={enteredFoodText}
+            />
+          </LinearGradient>
+
+          <View style={styles.buttonContainer}>
+            <View style={styles.button}>
+              <Button title="Cancel" onPress={props.onCancel} color="#ff5f5f" />
+            </View>
+            <View style={styles.button}>
+              <Button
+                title="Add food"
+                onPress={addFoodHandler}
+                color="#57cc99"
+              />
+            </View>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }
@@ -49,26 +65,38 @@ function FoodInput(props) {
 export default FoodInput;
 
 const styles = StyleSheet.create({
-  inputContainer: {
+  safeArea: {
     flex: 1,
+    backgroundColor: "#222",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  inputContainer: {
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#a3f590",
+    backgroundColor: "#333",
+    borderRadius: 12,
+    width: "90%",
+    elevation: 5,
   },
   image: {
-    width: 150,
-    height: 150,
-    margin: 20,
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
+  gradientInput: {
+    width: "100%",
+    borderRadius: 8,
+    padding: 2,
   },
   textInput: {
-    borderWidth: 1,
-    borderColor: "#ffffff",
-    backgroundColor: "#ffffff",
-    color: "#000000",
+    backgroundColor: "#00000090",
+    color: "#fff",
     borderRadius: 6,
     width: "100%",
-    padding: 16,
+    padding: 14,
+    textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",
