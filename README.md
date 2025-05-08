@@ -79,10 +79,10 @@ npm install
 3. Run the App
 npx expo start
 
-🔖 License
+## 🔖 License
 MIT © 2025
 
-📌 Notes
+## 📌 Notes
 Designed to work offline using SQLite storage
 
 Ideal for managing household storage or prepping
