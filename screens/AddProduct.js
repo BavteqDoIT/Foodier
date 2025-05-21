@@ -1,22 +1,27 @@
-import { Button, View } from "react-native";
-import { CommonActions } from '@react-navigation/native';
+import UniversalForm from "../components/UniversalForm";
+import { init } from "../util/database";
 
 function AddProduct({ navigation }) {
-  return (
-    <View>
-      <Button
-        title="Press"
-        onPress={() =>
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 1,
-              routes: [{ name: "HomePage" }, { name: "ProductsList" }],
-            })
-          )
-        }
-      />
-    </View>
-  );
+  const fields = [
+    { name: "name", label: "Product Name", placeholder: "e.g., Milk", required: true },
+    { name: "dateOfExpiration", label: "Expiration Date", placeholder: "YYYY-MM-DD", required: true },
+    { name: "code", label: "Code", placeholder: "Optional", required: true },
+  ];
+
+  const handleSubmit = async (data) => {
+    try {
+      const db = await init();
+      await db.runAsync(
+        `INSERT INTO products (name, dateOfExpiration, code) VALUES (?, ?, ?);`,
+        [data.name, data.dateOfExpiration, data.code || null]
+      );
+      navigation.goBack();
+    } catch (err) {
+      console.error("Insert failed:", err);
+    }
+  };
+
+  return <UniversalForm fields={fields} onSubmit={handleSubmit} submitLabel="Save Product" />;
 }
 
 export default AddProduct;

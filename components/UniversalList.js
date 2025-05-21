@@ -2,7 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../constants/colors";
 import IconButton from "./UI/IconButton";
 
-function UniversalList({ data, emptyMessage, onAdd, renderItem }) {
+function UniversalList({ data, emptyMessage, onAdd, renderItem,  onItemPress}) {
   return (
     <>
       <ScrollView
@@ -12,15 +12,36 @@ function UniversalList({ data, emptyMessage, onAdd, renderItem }) {
         {data.length === 0 ? (
           <Text style={styles.text}>{emptyMessage}</Text>
         ) : (
-          data.map((item, index) =>
-            renderItem ? (
+          data.map((item, index) => {
+            console.log(item);
+            return renderItem ? (
               renderItem(item, index)
             ) : (
-              <Pressable style={({ pressed }) => [pressed && styles.pressed]} key={index}>
-                <Text style={styles.text}>{item.name}</Text>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.itemContainer,
+                  pressed && styles.pressed,
+                ]}
+                key={item.id}
+                onPress={() => onItemPress?.(item)}
+              >
+                <Text style={styles.itemTitle}>{item.name}</Text>
+                {item.dateOfExpiration && (
+                  <Text style={styles.itemDetail}>
+                    Expires: {item.dateOfExpiration}
+                  </Text>
+                )}
+                {item.description && (
+                  <Text style={styles.itemDetail}>
+                    Description: {item.description}
+                  </Text>
+                )}
+                {item.code && (
+                  <Text style={styles.itemDetail}>Code: {item.code}</Text>
+                )}
               </Pressable>
-            )
-          )
+            );
+          })
         )}
       </ScrollView>
       <View style={styles.buttons}>
@@ -63,5 +84,22 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.7,
+  },
+  itemContainer: {
+    backgroundColor: Colors.gray800,
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 6,
+    elevation: 2,
+  },
+  itemTitle: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  itemDetail: {
+    color: "#ccc",
+    fontSize: 14,
   },
 });

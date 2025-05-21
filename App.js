@@ -8,9 +8,11 @@ import ProductsList from "./screens/ProductsList";
 import AddPlace from "./screens/AddPlace";
 import AddProduct from "./screens/AddProduct";
 import { useEffect, useState } from "react";
-import { init } from "./util/database";
+import { init, listMetaDataOfDatabase } from "./util/database";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import Loading from "./components/Loading";
+import ProductDetail from "./screens/ProductDetail";
+import PlaceDetail from "./screens/PlaceDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +23,7 @@ export default function App() {
     async function prepare() {
       try {
         await init();
+        await listMetaDataOfDatabase();
         setIsReady(true);
       } catch (e) {
         console.error("Database failed to initialize", e);
@@ -31,9 +34,7 @@ export default function App() {
   }, []);
 
   if (!isReady) {
-    return (
-      <Loading/>
-    );
+    return <Loading />;
   }
 
   return (
@@ -84,7 +85,23 @@ export default function App() {
             component={AddProduct}
             options={{
               headerTitleAlign: "center",
-              title: "Add new Place",
+              title: "Add new Product",
+            }}
+          />
+          <Stack.Screen
+            name="ProductDetail"
+            component={ProductDetail}
+            options={{
+              headerTitleAlign: "center",
+              title: "Product Details",
+            }}
+          />
+          <Stack.Screen
+            name="PlaceDetail"
+            component={PlaceDetail}
+            options={{
+              headerTitleAlign: "center",
+              title: "Place Details",
             }}
           />
         </Stack.Navigator>
