@@ -69,21 +69,7 @@ function ProductDetail({ route }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{product.name}</Text>
-      <Text style={styles.detail}>Expires: {product.dateOfExpiration}</Text>
       <Text style={styles.detail}>Code: {product.code || "N/A"}</Text>
-
-      <Text style={styles.label}>📦 Choose place:</Text>
-      <Picker
-        selectedValue={selectedPlaceId}
-        onValueChange={setSelectedPlaceId}
-        style={styles.picker}
-      >
-        <Picker.Item label="-- Choose place --" value={""} />
-        {places.map((place) => (
-          <Picker.Item key={place.id} label={place.name} value={place.id} />
-        ))}
-      </Picker>
-
       <View style={styles.buttonContainer}>
         <Button title="Save" onPress={handleSave} />
       </View>

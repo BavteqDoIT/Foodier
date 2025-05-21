@@ -13,6 +13,7 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import Loading from "./components/Loading";
 import ProductDetail from "./screens/ProductDetail";
 import PlaceDetail from "./screens/PlaceDetail";
+import AddProductToPlace from "./screens/AddProductToPlace";
 
 const Stack = createNativeStackNavigator();
 
@@ -102,6 +103,14 @@ export default function App() {
             options={{
               headerTitleAlign: "center",
               title: "Place Details",
+            }}
+          />
+          <Stack.Screen
+            name="AddProductToPlace"
+            component={AddProductToPlace}
+            options={{
+              headerTitleAlign: "center",
+              title: "Add you product to place",
             }}
           />
         </Stack.Navigator>

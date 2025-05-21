@@ -8,6 +8,14 @@ export async function init() {
   }
 
   await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS products (
+      id INTEGER PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      code TEXT
+    );
+  `);
+
+  await database.execAsync(`
     CREATE TABLE IF NOT EXISTS places (
       id INTEGER PRIMARY KEY NOT NULL,
       name TEXT NOT NULL,
@@ -16,18 +24,85 @@ export async function init() {
   `);
 
   await database.execAsync(`
-    CREATE TABLE IF NOT EXISTS products (
+    CREATE TABLE IF NOT EXISTS place_product (
       id INTEGER PRIMARY KEY NOT NULL,
-      name TEXT NOT NULL,
+      place_id INTEGER NOT NULL,
+      product_id INTEGER NOT NULL,
       dateOfExpiration TEXT NOT NULL,
-      code TEXT,
-      place_id INTEGER,
-      FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE SET NULL
+      FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE,
+      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     );
   `);
 
   return database;
 }
+
+// ------------------ PRODUCTS ------------------
+
+export async function addProduct(name, code = null) {
+  const db = await init();
+  return db.runAsync(
+    `INSERT INTO products (name, code) VALUES (?, ?);`,
+    [name, code]
+  );
+}
+
+export async function getAllProducts() {
+  const db = await init();
+  return db.getAllAsync(`SELECT * FROM products;`);
+}
+
+// ------------------ PLACES ------------------
+
+export async function addPlace(name, description = null) {
+  const db = await init();
+  return db.runAsync(
+    `INSERT INTO places (name, description) VALUES (?, ?);`,
+    [name, description]
+  );
+}
+
+export async function getAllPlaces() {
+  const db = await init();
+  return db.getAllAsync(`SELECT * FROM places;`);
+}
+
+// ------------------ PLACE_PRODUCT RELATION ------------------
+
+export async function addProductToPlace(placeId, productId, dateOfExpiration) {
+  const db = await init();
+  return db.runAsync(
+    `INSERT INTO place_product (place_id, product_id, dateOfExpiration) VALUES (?, ?, ?);`,
+    [placeId, productId, dateOfExpiration]
+  );
+}
+
+export async function getProductsInPlace(placeId) {
+  const db = await init();
+  return db.getAllAsync(
+    `
+    SELECT 
+      pp.id as linkId,
+      p.name,
+      p.code,
+      pp.dateOfExpiration
+    FROM place_product pp
+    JOIN products p ON pp.product_id = p.id
+    WHERE pp.place_id = ?;
+    `,
+    [placeId]
+  );
+}
+
+export async function removeProductFromPlace(linkId) {
+  const db = await init();
+  return db.runAsync(
+    `DELETE FROM place_product WHERE id = ?;`,
+    [linkId]
+  );
+}
+
+// ------------------ UTILITIES ------------------
 
 export async function listMetaDataOfDatabase() {
   if (!database) {
@@ -76,71 +151,10 @@ export async function listMetaDataOfDatabase() {
   return result;
 }
 
-export async function getProductsForPlace(placeId) {
-  const db = await init();
-  return db.getAllAsync(
-    `
-    SELECT * FROM products
-    WHERE place_id = ?;
-  `,
-    [placeId]
-  );
-}
-
-export async function getUnlinkedProducts() {
-  const db = await init();
-  return db.getAllAsync(`
-    SELECT * FROM products
-    WHERE place_id IS NULL;
-  `);
-}
-
-export async function getPlaceForProduct(productId) {
-  const db = await init();
-  return db.getFirstAsync(
-    `
-    SELECT pl.*
-    FROM places pl
-    JOIN products p ON p.place_id = pl.id
-    WHERE p.id = ?;
-  `,
-    [productId]
-  );
-}
-
-export async function getAllPlaces() {
-  const db = await init();
-  return db.getAllAsync(`SELECT * FROM places;`);
-}
-
-export async function linkProductToPlace(productId, placeId) {
-  const db = await init();
-  return db.runAsync(
-    `
-    UPDATE products
-    SET place_id = ?
-    WHERE id = ?;
-  `,
-    [placeId, productId]
-  );
-}
-
-export async function unlinkProduct(productId) {
-  const db = await init();
-  return db.runAsync(
-    `
-    UPDATE products
-    SET place_id = NULL
-    WHERE id = ?;
-  `,
-    [productId]
-  );
-}
-
 export async function resetDatabase() {
   const db = await init();
 
-  await db.execAsync(`DROP TABLE IF EXISTS product_place;`);
+  await db.execAsync(`DROP TABLE IF EXISTS place_product;`);
   await db.execAsync(`DROP TABLE IF EXISTS products;`);
   await db.execAsync(`DROP TABLE IF EXISTS places;`);
 

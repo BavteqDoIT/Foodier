@@ -4,7 +4,6 @@ import { init } from "../util/database";
 function AddProduct({ navigation }) {
   const fields = [
     { name: "name", label: "Product Name", placeholder: "e.g., Milk", required: true },
-    { name: "dateOfExpiration", label: "Expiration Date", placeholder: "YYYY-MM-DD", required: true },
     { name: "code", label: "Code", placeholder: "Optional", required: true },
   ];
 
@@ -12,8 +11,8 @@ function AddProduct({ navigation }) {
     try {
       const db = await init();
       await db.runAsync(
-        `INSERT INTO products (name, dateOfExpiration, code) VALUES (?, ?, ?);`,
-        [data.name, data.dateOfExpiration, data.code || null]
+        `INSERT INTO products (name, code) VALUES (?, ?);`,
+        [data.name, data.code]
       );
       navigation.goBack();
     } catch (err) {

@@ -10,7 +10,7 @@ function ProductsList({ navigation }) {
   const fetchProducts = async () => {
     try {
       const db = await init();
-      const rows = await db.getAllAsync("SELECT id, name, dateOfExpiration, code FROM products;");
+      const rows = await db.getAllAsync("SELECT id, name, code FROM products;");
       setProducts(rows);
     } catch (error) {
       console.error("Failed to fetch products:", error);
