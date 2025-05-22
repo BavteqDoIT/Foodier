@@ -15,6 +15,7 @@ import ProductDetail from "./screens/ProductDetail";
 import PlaceDetail from "./screens/PlaceDetail";
 import AddProductToPlace from "./screens/AddProductToPlace";
 import PlaceEdit from "./screens/PlaceEdit";
+import Scanner from "./screens/Scanner";
 
 const Stack = createNativeStackNavigator();
 
@@ -120,6 +121,14 @@ export default function App() {
             options={{
               headerTitleAlign: "center",
               title: "Edit your place",
+            }}
+          />
+          <Stack.Screen
+            name="Scanner"
+            component={Scanner}
+            options={{
+              headerTitleAlign: "center",
+              title: "Scanner",
             }}
           />
         </Stack.Navigator>
