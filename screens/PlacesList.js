@@ -34,6 +34,7 @@ function PlacesList({ navigation }) {
       emptyMessage="No places added yet!"
       onAdd={() => navigation.navigate("AddPlace")}
       onItemPress={(item) => navigation.navigate("PlaceDetail", {placeId: item.id})}
+      refreshList={fetchPlaces}
     />
   );
 }

@@ -1,8 +1,16 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../constants/colors";
 import IconButton from "./UI/IconButton";
+import { deletePlace, deleteProduct } from "../util/database";
 
-function UniversalList({ data, emptyMessage, onAdd, renderItem, onItemPress }) {
+function UniversalList({
+  data,
+  emptyMessage,
+  onAdd,
+  renderItem,
+  onItemPress,
+  refreshList,
+}) {
   return (
     <>
       <ScrollView
@@ -42,14 +50,50 @@ function UniversalList({ data, emptyMessage, onAdd, renderItem, onItemPress }) {
                       <Text style={styles.itemDetail}>Code: {item.code}</Text>
                     )}
                   </View>
-                  <IconButton
-                    icon="ellipsis-vertical" // dowolna ikona, np. menu
-                    color="white"
-                    size={24}
-                    onPress={() =>
-                      console.log("Right-side button pressed for", item.id)
-                    }
-                  />
+                  <View style={styles.itemContentRow}>
+                    <IconButton
+                      icon="create-outline"
+                      color="white"
+                      size={24}
+                      onPress={() =>
+                        console.log("Right-side button pressed for", item.id)
+                      }
+                    />
+                    <IconButton
+                      icon="trash-outline"
+                      color="white"
+                      size={24}
+                      onPress={() => {
+                        Alert.alert(
+                          "Confirm Delete",
+                          `Are you sure you want to delete "${item.name}"?`,
+                          [
+                            {
+                              text: "Cancel",
+                              style: "cancel",
+                            },
+                            {
+                              text: "Delete",
+                              style: "destructive",
+                              onPress: async () => {
+                                try {
+                                  if(item.description){
+                                  await deletePlace(item.id);
+                                  } else {
+                                    await deleteProduct(item.id);
+                                  }
+                                  refreshList();
+                                } catch (err) {
+                                  console.error("Failed to delete:", err);
+                                }
+                              },
+                            },
+                          ],
+                          { cancelable: true }
+                        );
+                      }}
+                    />
+                  </View>
                 </View>
               </Pressable>
             );

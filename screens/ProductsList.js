@@ -34,6 +34,7 @@ function ProductsList({ navigation }) {
       emptyMessage="No products added yet!"
       onAdd={() => navigation.navigate("AddProduct")}
       onItemPress={(item) => navigation.navigate("ProductDetail", {productId: item.id})}
+      refreshList={fetchProducts}
     />
   );
 }

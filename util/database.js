@@ -41,10 +41,10 @@ export async function init() {
 
 export async function addProduct(name, code = null) {
   const db = await init();
-  return db.runAsync(
-    `INSERT INTO products (name, code) VALUES (?, ?);`,
-    [name, code]
-  );
+  return db.runAsync(`INSERT INTO products (name, code) VALUES (?, ?);`, [
+    name,
+    code,
+  ]);
 }
 
 export async function getAllProducts() {
@@ -52,19 +52,47 @@ export async function getAllProducts() {
   return db.getAllAsync(`SELECT * FROM products;`);
 }
 
+export async function updateProduct(id, name, code = null) {
+  const db = await init();
+  return db.runAsync(`UPDATE products SET name = ?, code = ? WHERE id = ?;`, [
+    name,
+    code,
+    id,
+  ]);
+}
+
+export async function deleteProduct(id) {
+  const db = await init();
+  db.runAsync(removeProductFromAllPlaces(id));
+  return db.runAsync(`DELETE FROM products WHERE id = ?;`, [id]);
+}
 // ------------------ PLACES ------------------
 
 export async function addPlace(name, description = null) {
   const db = await init();
-  return db.runAsync(
-    `INSERT INTO places (name, description) VALUES (?, ?);`,
-    [name, description]
-  );
+  return db.runAsync(`INSERT INTO places (name, description) VALUES (?, ?);`, [
+    name,
+    description,
+  ]);
 }
 
 export async function getAllPlaces() {
   const db = await init();
   return db.getAllAsync(`SELECT * FROM places;`);
+}
+
+export async function updatePlace(id, name, description = null) {
+  const db = await init();
+  return db.runAsync(
+    `UPDATE places SET name = ?, description = ? WHERE id = ?;`,
+    [name, description, id]
+  );
+}
+
+export async function deletePlace(id) {
+  const db = await init();
+  db.runAsync(removeAllProductsFromPlace(id))
+  return db.runAsync(`DELETE FROM places WHERE id = ?;`, [id]);
 }
 
 // ------------------ PLACE_PRODUCT RELATION ------------------
@@ -94,11 +122,32 @@ export async function getProductsInPlace(placeId) {
   );
 }
 
-export async function removeProductFromPlace(linkId) {
+export async function updateProductInPlace(linkId, dateOfExpiration) {
   const db = await init();
   return db.runAsync(
-    `DELETE FROM place_product WHERE id = ?;`,
-    [linkId]
+    `UPDATE place_product SET dateOfExpiration = ? WHERE id = ?;`,
+    [dateOfExpiration, linkId]
+  );
+}
+
+export async function removeProductFromPlace(linkId) {
+  const db = await init();
+  return db.runAsync(`DELETE FROM place_product WHERE id = ?;`, [linkId]);
+}
+
+export async function removeAllProductsFromPlace(placeId) {
+  const db = await init();
+  return db.runAsync(
+    `DELETE FROM place_product WHERE place_id = ?;`,
+    [placeId]
+  );
+}
+
+export async function removeProductFromAllPlaces(productId) {
+  const db = await init();
+  return db.runAsync(
+    `DELETE FROM place_product WHERE product_id = ?;`,
+    [productId]
   );
 }
 
