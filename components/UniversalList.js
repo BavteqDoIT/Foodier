@@ -2,7 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../constants/colors";
 import IconButton from "./UI/IconButton";
 
-function UniversalList({ data, emptyMessage, onAdd, renderItem,  onItemPress}) {
+function UniversalList({ data, emptyMessage, onAdd, renderItem, onItemPress }) {
   return (
     <>
       <ScrollView
@@ -25,20 +25,32 @@ function UniversalList({ data, emptyMessage, onAdd, renderItem,  onItemPress}) {
                 key={item.id}
                 onPress={() => onItemPress?.(item)}
               >
-                <Text style={styles.itemTitle}>{item.name}</Text>
-                {item.dateOfExpiration && (
-                  <Text style={styles.itemDetail}>
-                    Expires: {item.dateOfExpiration}
-                  </Text>
-                )}
-                {item.description && (
-                  <Text style={styles.itemDetail}>
-                    Description: {item.description}
-                  </Text>
-                )}
-                {item.code && (
-                  <Text style={styles.itemDetail}>Code: {item.code}</Text>
-                )}
+                <View style={styles.itemContentRow}>
+                  <View style={styles.itemTextContainer}>
+                    <Text style={styles.itemTitle}>{item.name}</Text>
+                    {item.dateOfExpiration && (
+                      <Text style={styles.itemDetail}>
+                        Expires: {item.dateOfExpiration}
+                      </Text>
+                    )}
+                    {item.description && (
+                      <Text style={styles.itemDetail}>
+                        Description: {item.description}
+                      </Text>
+                    )}
+                    {item.code && (
+                      <Text style={styles.itemDetail}>Code: {item.code}</Text>
+                    )}
+                  </View>
+                  <IconButton
+                    icon="ellipsis-vertical" // dowolna ikona, np. menu
+                    color="white"
+                    size={24}
+                    onPress={() =>
+                      console.log("Right-side button pressed for", item.id)
+                    }
+                  />
+                </View>
               </Pressable>
             );
           })
@@ -101,5 +113,14 @@ const styles = StyleSheet.create({
   itemDetail: {
     color: "#ccc",
     fontSize: 14,
+  },
+  itemContentRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  itemTextContainer: {
+    flex: 1,
+    paddingRight: 10,
   },
 });

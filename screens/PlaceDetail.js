@@ -50,7 +50,7 @@ function PlaceDetail({ route, navigation }) {
           icon={"add-circle-outline"}
           color={Colors.primary500}
           size={45}
-          onPress={() => navigation.navigate("AddProductToPlace", {placeId})}
+          onPress={() => navigation.replace("AddProductToPlace", {placeId})}
         />
     </View>
   );
