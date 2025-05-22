@@ -1,76 +1,74 @@
 import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
 import { useEffect, useState } from "react";
-import { init, getAllPlaces, updateProduct, getPlaceForProduct } from "../util/database";
+import { init, updatePlace } from "../util/database";
 import Loading from "../components/Loading";
 import { Colors } from "../constants/colors";
 
-function ProductDetail({ route, navigation }) {
-  const [product, setProduct] = useState(null);
+function PlaceEdit({ route, navigation }) {
+  const [place, setPlace] = useState(null);
   const [name, setName] = useState("");
-  const [code, setCode] = useState("");
+  const [description, setDescription] = useState("");
 
-  const { productId } = route.params;
+  const { placeId } = route.params;
 
   useEffect(() => {
     const loadData = async () => {
       const db = await init();
 
-      const productData = await db.getFirstAsync(
-        "SELECT * FROM products WHERE id = ?;",
-        [productId]
+      const placeData = await db.getFirstAsync(
+        "SELECT * FROM places WHERE id = ?;",
+        [placeId]
       );
-      setProduct(productData);
-      setName(productData.name);
-      setCode(productData.code || "");
 
-      const placeData = await getAllPlaces();
-      setPlaces(placeData);
-
-      const currentPlace = await getPlaceForProduct(productId);
-      if (currentPlace) {
-        setSelectedPlaceId(currentPlace.id);
-        setOriginalPlaceId(currentPlace.id);
+      if (!placeData) {
+        Alert.alert("Error", "Place not found.");
+        navigation.goBack();
+        return;
       }
+
+      setPlace(placeData);
+      setName(placeData.name);
+      setDescription(placeData.description || "");
     };
 
     loadData();
-  }, [productId]);
+  }, [placeId]);
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert("Validation Error", "Product name is required.");
+      Alert.alert("Validation Error", "Place name is required.");
       return;
     }
 
     try {
-      await updateProduct(productId, name.trim(), code.trim());
-      Alert.alert("Success", "Product updated successfully!");
+      await updatePlace(placeId, name.trim(), description.trim());
+      Alert.alert("Success", "Place updated successfully!");
       navigation.goBack();
     } catch (error) {
-      console.error("Error updating product", error);
-      Alert.alert("Error", "Failed to update product.");
+      console.error("Error updating place", error);
+      Alert.alert("Error", "Failed to update place.");
     }
   };
 
-  if (!product) return <Loading />;
+  if (!place) return <Loading />;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Edit Product Name:</Text>
+      <Text style={styles.label}>Edit Place Name:</Text>
       <TextInput
         style={styles.input}
         value={name}
         onChangeText={setName}
-        placeholder="Product Name"
+        placeholder="Place Name"
         placeholderTextColor="gray"
       />
 
-      <Text style={styles.label}>Edit Product Code:</Text>
+      <Text style={styles.label}>Edit Description:</Text>
       <TextInput
         style={styles.input}
-        value={code}
-        onChangeText={setCode}
-        placeholder="Product Code"
+        value={description}
+        onChangeText={setDescription}
+        placeholder="Description"
         placeholderTextColor="gray"
       />
 
@@ -81,7 +79,7 @@ function ProductDetail({ route, navigation }) {
   );
 }
 
-export default ProductDetail;
+export default PlaceEdit;
 
 const styles = StyleSheet.create({
   container: {

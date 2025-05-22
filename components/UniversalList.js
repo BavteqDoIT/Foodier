@@ -1,7 +1,15 @@
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Colors } from "../constants/colors";
 import IconButton from "./UI/IconButton";
 import { deletePlace, deleteProduct } from "../util/database";
+import { useNavigation } from "@react-navigation/native";
 
 function UniversalList({
   data,
@@ -11,6 +19,8 @@ function UniversalList({
   onItemPress,
   refreshList,
 }) {
+
+  const navigation = useNavigation();
   return (
     <>
       <ScrollView
@@ -55,12 +65,20 @@ function UniversalList({
                       icon="create-outline"
                       color="white"
                       size={24}
-                      onPress={() =>
-                        console.log("Right-side button pressed for", item.id)
-                      }
+                      onPress={() => {
+                        if (item.code) {
+                          navigation.navigate("ProductDetail", {
+                            productId: item.id,
+                          });
+                        } else if (item.description) {
+                          navigation.navigate("PlaceEdit",{
+                            placeId: item.id,
+                          });
+                        }
+                      }}
                     />
                     <IconButton
-                      icon="trash-outline"
+                      icon="trash-outline"ś
                       color="white"
                       size={24}
                       onPress={() => {
@@ -77,8 +95,8 @@ function UniversalList({
                               style: "destructive",
                               onPress: async () => {
                                 try {
-                                  if(item.description){
-                                  await deletePlace(item.id);
+                                  if (item.description) {
+                                    await deletePlace(item.id);
                                   } else {
                                     await deleteProduct(item.id);
                                   }

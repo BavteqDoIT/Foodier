@@ -14,6 +14,7 @@ import Loading from "./components/Loading";
 import ProductDetail from "./screens/ProductDetail";
 import PlaceDetail from "./screens/PlaceDetail";
 import AddProductToPlace from "./screens/AddProductToPlace";
+import PlaceEdit from "./screens/PlaceEdit";
 
 const Stack = createNativeStackNavigator();
 
@@ -111,6 +112,14 @@ export default function App() {
             options={{
               headerTitleAlign: "center",
               title: "Add you product to place",
+            }}
+          />
+          <Stack.Screen
+            name="PlaceEdit"
+            component={PlaceEdit}
+            options={{
+              headerTitleAlign: "center",
+              title: "Edit your place",
             }}
           />
         </Stack.Navigator>
